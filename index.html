@@ -777,7 +777,7 @@ function saveKpi() { localStorage.setItem('wopc_kpi', JSON.stringify(kpiValues))
 function getStatus(id) { return taskStatus[id] || 0; }
 function setStatus(id, s) { taskStatus[id] = s; saveTaskStatus(); }
 
-function today() { return '2026-04-18'; }
+function today() { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function toDate(s) { return new Date(s+'T00:00:00'); }
 function diffDays(a, b) { return Math.round((toDate(b)-toDate(a))/(86400000)); }
 
