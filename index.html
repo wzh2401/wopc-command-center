@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WOPC大会 · 项目指挥中心</title>
+<style>
+:root {
+  --bg: #07080f;
+  --bg2: #0d1017;
+  --bg3: #141822;
+  --bg4: #1a1f2e;
+  --gold: #C9A84C;
+  --gold-dim: #8a7535;
+  --white: #e8e8e8;
+  --gray: #8892a4;
+  --gray2: #4a5568;
+  --red: #F87171;
+  --green: #34D399;
+  --blue: #4A9EFF;
+  --orange: #FB923C;
+  --purple: #A78BFA;
+  --pink: #FB7185;
+  --cyan: #38BDF8;
+  --indigo: #818CF8;
+  --teal: #2DD4BF;
+  --radius: 8px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--white); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height:1.5; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg2); }
+::-webkit-scrollbar-thumb { background:var(--gray2); border-radius:3px; }
+
+/* HEADER */
+.header {
+  position:sticky; top:0; z-index:100;
+  background: linear-gradient(135deg, #0a0e1a 0%, #111827 100%);
+  border-bottom: 1px solid var(--gold-dim);
+  padding: 12px 24px;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;
+}
+.header-left { display:flex; align-items:center; gap:16px; }
+.header h1 { font-size:20px; color:var(--gold); letter-spacing:2px; }
+.header .subtitle { font-size:12px; color:var(--gray); }
+.countdown-box {
+  background: linear-gradient(135deg, var(--gold), #b8962f);
+  color:#000; padding:6px 16px; border-radius:20px;
+  font-weight:700; font-size:14px; white-space:nowrap;
+}
+.nav-tabs { display:flex; gap:4px; }
+.nav-tab {
+  padding:8px 20px; border-radius:var(--radius); cursor:pointer;
+  font-size:14px; font-weight:600; border:1px solid transparent;
+  transition: all .2s;
+}
+.nav-tab.active { background:var(--gold); color:#000; }
+.nav-tab:not(.active) { color:var(--gray); border-color:var(--gray2); }
+.nav-tab:not(.active):hover { border-color:var(--gold); color:var(--gold); }
+
+/* LAYOUT */
+.view { display:none; padding:20px; max-width:1400px; margin:0 auto; }
+.view.active { display:block; }
+
+/* CARDS */
+.card {
+  background:var(--bg3); border:1px solid var(--gray2); border-radius:var(--radius);
+  padding:16px; margin-bottom:16px;
+}
+.card-title {
+  font-size:14px; font-weight:700; color:var(--gold); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+}
+.card-title .toggle { font-size:10px; transition:transform .2s; }
+.card-title .toggle.collapsed { transform:rotate(-90deg); }
+
+/* GRID */
+.grid2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:12px; }
+.grid3 { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:12px; }
+.grid4 { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:12px; }
+
+/* KPI */
+.kpi-card {
+  background:var(--bg4); border:1px solid var(--gray2); border-radius:var(--radius);
+  padding:14px; text-align:center;
+}
+.kpi-card .kpi-label { font-size:12px; color:var(--gray); margin-bottom:6px; }
+.kpi-card .kpi-value { display:flex; align-items:center; justify-content:center; gap:4px; margin-bottom:8px; }
+.kpi-card .kpi-value input {
+  width:60px; background:var(--bg2); border:1px solid var(--gray2); color:var(--gold);
+  font-size:22px; font-weight:700; text-align:center; border-radius:4px; padding:2px;
+}
+.kpi-card .kpi-value input:focus { border-color:var(--gold); outline:none; }
+.kpi-card .kpi-target { font-size:18px; color:var(--gray); font-weight:600; }
+.progress-bar { height:6px; background:var(--bg); border-radius:3px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:3px; transition:width .4s; }
+
+/* ROLE */
+.role-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:8px; }
+.role-item {
+  display:flex; align-items:center; gap:8px; padding:8px 10px;
+  background:var(--bg2); border-radius:6px; border:1px solid var(--gray2);
+}
+.role-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.role-title { font-size:12px; color:var(--gray); white-space:nowrap; min-width:70px; }
+.role-input {
+  flex:1; background:transparent; border:none; border-bottom:1px solid var(--gray2);
+  color:var(--white); font-size:13px; padding:2px 4px;
+}
+.role-input:focus { border-bottom-color:var(--gold); outline:none; }
+
+/* PHASE */
+.phase-bar {
+  display:flex; gap:4px; margin-bottom:8px;
+}
+.phase-seg {
+  flex:1; padding:8px 12px; border-radius:6px; text-align:center;
+  font-size:12px; border:1px solid var(--gray2); position:relative;
+}
+.phase-seg.current { border-color:var(--gold); box-shadow:0 0 8px rgba(201,168,76,0.3); }
+.phase-seg .phase-name { font-weight:600; margin-bottom:2px; }
+.phase-seg .phase-date { font-size:10px; color:var(--gray); }
+.phase-seg .phase-pct { font-size:16px; font-weight:700; color:var(--gold); margin-top:4px; }
+
+/* WORKSTREAM */
+.ws-item {
+  display:flex; align-items:center; gap:10px; padding:8px 0;
+  border-bottom:1px solid var(--bg);
+}
+.ws-item:last-child { border-bottom:none; }
+.ws-name { width:90px; font-size:13px; flex-shrink:0; }
+.ws-bar { flex:1; }
+.ws-pct { width:50px; text-align:right; font-size:13px; color:var(--gold); font-weight:600; }
+
+/* URGENT */
+.urgent-item {
+  display:flex; align-items:flex-start; gap:8px; padding:8px; margin-bottom:6px;
+  background:var(--bg2); border-radius:6px; border-left:3px solid var(--red);
+}
+.urgent-item.today { border-left-color:var(--gold); }
+.urgent-item.upcoming { border-left-color:var(--blue); }
+.urgent-date { font-size:11px; color:var(--gray); white-space:nowrap; min-width:50px; }
+.urgent-text { font-size:13px; flex:1; }
+
+/* ROLE SUMMARY */
+.role-summary-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:8px; }
+.role-sum-card {
+  background:var(--bg2); border-radius:6px; padding:10px; border:1px solid var(--gray2);
+}
+.role-sum-header { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+.role-sum-stats { display:flex; gap:8px; font-size:11px; color:var(--gray); }
+.role-sum-stats span { display:flex; align-items:center; gap:2px; }
+
+/* DAILY VIEW */
+.daily-layout { display:flex; gap:16px; min-height:calc(100vh - 80px); }
+.cal-sidebar { width:280px; flex-shrink:0; }
+.daily-main { flex:1; min-width:0; }
+
+.cal-month { margin-bottom:12px; }
+.cal-month-title { font-size:13px; font-weight:700; color:var(--gold); margin-bottom:4px; text-align:center; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.cal-header { font-size:10px; color:var(--gray); text-align:center; padding:2px; }
+.cal-cell {
+  aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:12px; border-radius:4px; cursor:pointer; border:2px solid transparent;
+  background:var(--bg2); position:relative; transition:all .15s;
+}
+.cal-cell:empty { background:transparent; cursor:default; }
+.cal-cell:hover:not(:empty) { background:var(--bg4); }
+.cal-cell.today { box-shadow:0 0 0 1px var(--gold) inset; }
+.cal-cell.selected { background:var(--gold) !important; color:#000 !important; font-weight:700; }
+.cal-cell.all-done { border-color:var(--green); }
+.cal-cell.some-done { border-color:var(--gold); }
+.cal-cell.overdue { border-color:var(--red); }
+.cal-cell.no-tasks { border-color:transparent; }
+.cal-cell .star { position:absolute; top:1px; right:2px; font-size:8px; color:var(--gold); }
+.cal-cell .badge {
+  position:absolute; bottom:1px; right:2px; font-size:8px;
+  background:var(--gray2); color:var(--white); border-radius:3px; padding:0 3px; line-height:1.4;
+}
+.cal-cell .phase-dot {
+  position:absolute; bottom:1px; left:2px; width:4px; height:4px; border-radius:50%;
+}
+
+/* DAILY DETAIL */
+.daily-header {
+  background:var(--bg3); border:1px solid var(--gray2); border-radius:var(--radius);
+  padding:16px; margin-bottom:12px;
+}
+.daily-header h2 { font-size:18px; color:var(--gold); }
+.daily-header .meta { font-size:12px; color:var(--gray); margin-top:4px; display:flex; gap:12px; flex-wrap:wrap; }
+.daily-header .meta .phase-label {
+  padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600;
+}
+
+.ws-group { margin-bottom:16px; }
+.ws-group-title {
+  font-size:13px; font-weight:700; color:var(--gold); padding:6px 0;
+  border-bottom:1px solid var(--gray2); margin-bottom:8px;
+}
+
+.task-item {
+  display:flex; gap:10px; padding:10px; margin-bottom:6px;
+  background:var(--bg3); border:1px solid var(--gray2); border-radius:6px;
+  transition:all .15s; align-items:flex-start;
+}
+.task-item:hover { border-color:var(--gold-dim); }
+.task-checkbox {
+  width:22px; height:22px; border-radius:50%; border:2px solid var(--gray2);
+  cursor:pointer; flex-shrink:0; margin-top:2px;
+  display:flex; align-items:center; justify-content:center; font-size:12px;
+  transition:all .15s; background:transparent;
+}
+.task-checkbox.status-1 { border-color:var(--gold); background:rgba(201,168,76,0.2); }
+.task-checkbox.status-1::after { content:"~"; color:var(--gold); }
+.task-checkbox.status-2 { border-color:var(--green); background:var(--green); }
+.task-checkbox.status-2::after { content:"\2713"; color:#000; font-weight:700; }
+.task-body { flex:1; min-width:0; }
+.task-title-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.task-title { font-size:13px; font-weight:600; }
+.task-desc { font-size:12px; color:var(--gray); margin-top:2px; }
+.task-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; }
+.tag {
+  font-size:10px; padding:1px 6px; border-radius:10px; font-weight:600;
+  white-space:nowrap;
+}
+.tag-role { border:1px solid; }
+.tag-p0 { background:rgba(248,113,113,0.2); color:var(--red); }
+.tag-p1 { background:rgba(251,146,60,0.2); color:var(--orange); }
+.tag-p2 { background:rgba(74,158,255,0.2); color:var(--blue); }
+.tag-deliverable { background:rgba(52,211,153,0.15); color:var(--green); border:1px solid rgba(52,211,153,0.3); }
+.tag-time { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid rgba(201,168,76,0.3); }
+.task-item.completed .task-title { text-decoration:line-through; color:var(--gray); }
+
+/* MILESTONE */
+.milestone-box {
+  background:linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03));
+  border:1px solid var(--gold-dim); border-radius:var(--radius);
+  padding:16px; margin-bottom:16px;
+}
+.milestone-box h3 { color:var(--gold); font-size:15px; margin-bottom:10px; }
+.ms-check { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:13px; }
+.ms-check input[type=checkbox] { accent-color:var(--gold); width:16px; height:16px; }
+
+/* TIMELINE OVERLAY */
+.tl-overlay {
+  position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(4,6,14,0.92); z-index:200;
+  display:none; overflow-y:auto;
+  backdrop-filter:blur(8px);
+}
+.tl-overlay.show { display:flex; justify-content:center; }
+.tl-wrap {
+  width:100%; max-width:860px; padding:30px 20px 60px;
+}
+.tl-close {
+  position:fixed; top:20px; right:28px; z-index:210;
+  width:40px; height:40px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--gray2);
+  color:var(--gray); font-size:22px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .2s;
+}
+.tl-close:hover { color:var(--gold); border-color:var(--gold); }
+.tl-head {
+  text-align:center; margin-bottom:12px;
+}
+.tl-head h2 { font-size:22px; color:var(--gold); letter-spacing:1px; }
+.tl-head .tl-sub { font-size:13px; color:var(--gray); margin-top:4px; }
+.tl-stats {
+  display:flex; justify-content:center; gap:20px; margin:16px 0 32px;
+}
+.tl-stat {
+  text-align:center; padding:10px 18px; background:var(--bg3);
+  border:1px solid var(--gray2); border-radius:8px; min-width:80px;
+}
+.tl-stat .n { font-size:22px; font-weight:800; line-height:1; }
+.tl-stat .l { font-size:10px; color:var(--gray); margin-top:4px; }
+
+/* S-TIMELINE SPINE */
+.s-tl { position:relative; padding:0 10px; }
+.s-tl::before {
+  content:''; position:absolute; left:50%; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg, var(--gold) 0%, var(--gold-dim) 50%, var(--gray2) 100%);
+  transform:translateX(-50%);
+}
+
+/* PHASE DIVIDER */
+.tl-phase-div {
+  text-align:center; position:relative; margin:28px 0 20px; z-index:2;
+}
+.tl-phase-pill {
+  display:inline-block; padding:5px 20px; border-radius:14px;
+  font-size:12px; font-weight:700; letter-spacing:1px;
+  background:var(--bg); border:1px solid;
+}
+
+/* TIMELINE NODE */
+.tl-node {
+  display:flex; margin-bottom:16px; position:relative; min-height:60px;
+}
+.tl-node.left { justify-content:flex-start; }
+.tl-node.right { justify-content:flex-end; }
+.tl-card {
+  width:calc(50% - 28px); padding:12px 14px;
+  background:var(--bg3); border:1px solid var(--gray2); border-radius:8px;
+  transition:all .2s; cursor:default; position:relative;
+}
+.tl-card:hover { border-color:var(--gold-dim); transform:translateY(-1px); box-shadow:0 4px 16px rgba(0,0,0,0.4); }
+/* Arrow pointer */
+.tl-node.left .tl-card::after {
+  content:''; position:absolute; top:16px; right:-7px;
+  width:12px; height:12px; background:var(--bg3);
+  border-right:1px solid var(--gray2); border-top:1px solid var(--gray2);
+  transform:rotate(45deg); border-radius:2px;
+}
+.tl-node.right .tl-card::after {
+  content:''; position:absolute; top:16px; left:-7px;
+  width:12px; height:12px; background:var(--bg3);
+  border-left:1px solid var(--gray2); border-bottom:1px solid var(--gray2);
+  transform:rotate(45deg); border-radius:2px;
+}
+.tl-node.left .tl-card:hover::after { border-color:var(--gold-dim); }
+.tl-node.right .tl-card:hover::after { border-color:var(--gold-dim); }
+
+/* Center dot */
+.tl-dot2 {
+  position:absolute; left:50%; top:16px; transform:translateX(-50%);
+  width:14px; height:14px; border-radius:50%; z-index:3;
+  border:2.5px solid var(--gold); background:var(--bg);
+  transition:all .2s;
+}
+.tl-dot2.st-done { background:var(--green); border-color:var(--green); box-shadow:0 0 6px rgba(52,211,153,0.4); }
+.tl-dot2.st-doing { background:var(--gold); border-color:var(--gold); box-shadow:0 0 6px rgba(201,168,76,0.4); }
+.tl-dot2.st-overdue { background:var(--red); border-color:var(--red); box-shadow:0 0 6px rgba(248,113,113,0.4); }
+.tl-dot2.st-future { background:var(--bg2); border-color:var(--gray2); }
+
+/* Card content */
+.tl-card .tl-date { font-size:11px; font-weight:600; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+.tl-card .tl-title2 { font-size:13px; font-weight:600; color:var(--white); line-height:1.4; }
+.tl-card .tl-desc2 { font-size:11px; color:var(--gray); margin-top:3px; line-height:1.4; }
+.tl-card .tl-tags2 { display:flex; gap:4px; flex-wrap:wrap; margin-top:6px; }
+.tl-card.is-done { opacity:0.5; }
+.tl-card.is-done .tl-title2 { text-decoration:line-through; }
+
+/* Status dot legend */
+.tl-legend {
+  display:flex; justify-content:center; gap:16px; margin-bottom:24px;
+  font-size:11px; color:var(--gray);
+}
+.tl-legend span { display:flex; align-items:center; gap:4px; }
+.tl-legend .ld { width:10px; height:10px; border-radius:50%; }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .header { padding:8px 12px; }
+  .header h1 { font-size:16px; }
+  .daily-layout { flex-direction:column; }
+  .cal-sidebar { width:100%; }
+  .phase-bar { flex-wrap:wrap; }
+  .view { padding:12px; }
+  /* Timeline mobile: single column */
+  .s-tl::before { left:16px; }
+  .tl-node.left, .tl-node.right { justify-content:flex-end; }
+  .tl-card { width:calc(100% - 40px); }
+  .tl-dot2 { left:16px !important; }
+  .tl-node.left .tl-card::after, .tl-node.right .tl-card::after { display:none; }
+  .tl-stats { flex-wrap:wrap; gap:8px; }
+  .tl-stat { min-width:60px; padding:8px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div>
+      <h1>WOPC大会 · 项目指挥中心</h1>
+      <div class="subtitle">硅碳协同·世界共生 | 2026年5月27日 厦门国际会展中心A3馆</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div class="countdown-box" id="countdown"></div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="switchView('dashboard')">总览仪表盘</div>
+      <div class="nav-tab" onclick="switchView('daily')">每日任务</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div class="view active" id="view-dashboard">
+
+  <!-- ROLE MANAGEMENT -->
+  <div class="card" id="role-card">
+    <div class="card-title" onclick="toggleCard('role-body')">
+      <span class="toggle" id="toggle-role-body">&#9660;</span> 角色分工管理
+    </div>
+    <div id="role-body">
+      <div class="role-grid" id="role-grid"></div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="card">
+    <div class="card-title">核心KPI追踪</div>
+    <div class="grid4" id="kpi-grid"></div>
+  </div>
+
+  <!-- PHASES -->
+  <div class="card">
+    <div class="card-title">阶段进度</div>
+    <div class="phase-bar" id="phase-bar"></div>
+  </div>
+
+  <!-- WORKSTREAMS -->
+  <div class="card">
+    <div class="card-title">工作流进度</div>
+    <div id="ws-list"></div>
+  </div>
+
+  <!-- URGENT -->
+  <div class="card">
+    <div class="card-title" style="color:var(--red);">&#9888; 紧急事项</div>
+    <div id="urgent-list"></div>
+  </div>
+
+  <!-- ROLE SUMMARY -->
+  <div class="card">
+    <div class="card-title">各角色任务概览</div>
+    <div class="role-summary-grid" id="role-summary"></div>
+  </div>
+
+</div>
+
+<!-- DAILY VIEW -->
+<div class="view" id="view-daily">
+  <div class="daily-layout">
+    <div class="cal-sidebar" id="cal-sidebar"></div>
+    <div class="daily-main" id="daily-main">
+      <div style="text-align:center;color:var(--gray);padding:40px;">请在左侧日历选择日期查看任务详情</div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMELINE OVERLAY -->
+<div class="tl-overlay" id="tl-overlay" onclick="if(event.target===this)closeTL()">
+  <div class="tl-wrap">
+    <div class="tl-close" onclick="closeTL()">&times;</div>
+    <div id="tl-content"></div>
+  </div>
+</div>
+
+<script>
+// ============ DATA ============
+const ROLES_DEF = [
+  {key:'commander', title:'总指挥', default:'二马/林艺品', color:'#A78BFA'},
+  {key:'marketing', title:'宣传负责人', default:'待确认', color:'#FB923C'},
+  {key:'design', title:'设计负责人', default:'待确认', color:'#4A9EFF'},
+  {key:'operations', title:'运营负责人', default:'待确认', color:'#34D399'},
+  {key:'guest', title:'嘉宾负责人', default:'沈总/吴总', color:'#F87171'},
+  {key:'booth', title:'招商负责人', default:'李乐', color:'#C9A84C'},
+  {key:'reception_a', title:'签到接待A', default:'吴霏', color:'#38BDF8'},
+  {key:'reception_b', title:'签到接待B', default:'任姝洁', color:'#818CF8'},
+  {key:'tech', title:'技术保障', default:'待确认', color:'#2DD4BF'},
+  {key:'venue', title:'搭建负责人', default:'待确认', color:'#FB7185'},
+];
+
+const PHASES = [
+  {name:'筹备期', start:'2026-04-11', end:'2026-04-20', color:'#A78BFA'},
+  {name:'传播期', start:'2026-04-21', end:'2026-05-10', color:'#4A9EFF'},
+  {name:'冲刺期', start:'2026-05-11', end:'2026-05-20', color:'#FB923C'},
+  {name:'收尾期', start:'2026-05-21', end:'2026-05-27', color:'#F87171'},
+];
+
+const WORKSTREAMS = [
+  {key:'宣传推广', label:'宣传推广', color:'#FB923C'},
+  {key:'嘉宾管理', label:'嘉宾管理', color:'#F87171'},
+  {key:'展位招商', label:'展位招商', color:'#C9A84C'},
+  {key:'设计物料', label:'设计物料', color:'#4A9EFF'},
+  {key:'现场执行', label:'现场执行', color:'#FB7185'},
+  {key:'行政运营', label:'行政运营', color:'#34D399'},
+];
+
+const MILESTONES = {
+  '2026-04-20': {
+    label:'里程碑1: 弹药就绪',
+    checks:[
+      '报名入口可访问（三个表单链接正常）',
+      '主KV + 3张预热海报完成并审核通过',
+      '私域种子用户开始预热（朋友圈已发）',
+      'BD名单和合作方案PDF就绪',
+      '日期统一确认为5月27日',
+      '宣传负责人确认状态'
+    ]
+  },
+  '2026-05-10': {
+    label:'里程碑2: 传播达标 + 早鸟截止',
+    checks:[
+      '参观访客报名 >= 100人',
+      '演讲会员确认 >= 5人',
+      '至少3个外部渠道有曝光',
+      '展位摊主已接触>=10家，意向>=3家',
+      '早鸟价(1599元)截止'
+    ]
+  },
+  '2026-05-20': {
+    label:'里程碑3: 冲刺完成 + 演讲截止',
+    checks:[
+      '参观访客报名 >= 250人',
+      '演讲会员确认 >= 8人',
+      '展位摊主确认 >= 6位',
+      '所有确认嘉宾已签合同/微信确认',
+      '展位搭建设计图确认',
+      '活动名片到货',
+      'OPC周边礼品到货'
+    ]
+  }
+};
+
+const MILESTONE_DATES = ['2026-04-20','2026-05-10','2026-05-20','2026-05-27'];
+
+const KPI_DEF = [
+  {key:'visitors', label:'参观访客报名', target:300, unit:'人'},
+  {key:'speakers', label:'演讲会员确认', target:10, unit:'人'},
+  {key:'booths', label:'展位摊主确认', target:10, unit:'家'},
+  {key:'revenue', label:'预计收入(万)', target:22, unit:'万'},
+];
+
+// TASKS - complete database
+let TASKS = [];
+let tid = 0;
+function T(date, role, priority, ws, title, desc, opts={}) {
+  TASKS.push({id:'t'+(tid++), date:'2026-'+date, role, priority, ws, title, desc, ...opts});
+}
+
+// Phase 1
+T('04-11','operations','P1','行政运营','梳理OPC社群资源清单','统计各社群人数，列出KOL名单，建Excel追踪表',{deliverable:'OPC私域用户清单Excel'});
+T('04-11','operations','P2','行政运营','收集所有OPC成员联系方式','整理微信/手机/邮箱，确保后续能触达每个人');
+T('04-12','commander','P1','行政运营','确定大会主题','最终确认"硅碳协同·世界共生"主题，形成文字说明');
+T('04-12','design','P1','设计物料','确定视觉风格基调','深蓝+金色主色调，收集5-10张视觉参考素材',{deliverable:'视觉规范文档'});
+T('04-12','design','P2','设计物料','收集视觉参考素材','搜集同类大会/科技发布会的视觉案例，建参考图库');
+T('04-13','operations','P1','行政运营','确定三类席位定价方案','参观访客免费；演讲会员早鸟1599→1699→1999；展位摊主2万/位',{deliverable:'定价方案文档'});
+T('04-13','operations','P1','行政运营','确定收款方式','对公转账/微信/支付宝，准备收款二维码和账户信息',{deliverable:'收款渠道信息'});
+T('04-14','operations','P1','宣传推广','整理BD名单','列出20-30个KOL/媒体/合作伙伴',{deliverable:'BD名单Excel'});
+T('04-14','operations','P2','行政运营','准备合作方案内容大纲','梳理合作方案需要包含的内容板块');
+T('04-15','design','P1','设计物料','启动主KV设计','横版+竖版两版，需体现"硅碳协同·世界共生"主题');
+T('04-15','design','P1','设计物料','启动预热海报设计','3版：悬念型/身份认同型/稀缺型');
+T('04-15','operations','P1','行政运营','开始建立三个报名表单','展位摊主/演讲会员/参观访客报名表');
+T('04-15','operations','P0','行政运营','OPC私域用户清单完成','截止日！确认清单完整并可用');
+T('04-16','design','P0','设计物料','主题slogan/视觉风格确定','截止日！视觉规范文档定稿');
+T('04-16','design','P1','设计物料','展位效果图/功能分区','200平米展区的平面布局图（已延期，需尽快补上）');
+T('04-16','operations','P2','行政运营','测试报名表单流程','自己填一遍确保流程通畅、数据正确收集');
+T('04-16','commander','P2','行政运营','确认展区布局初步方案','审核200平米展区的功能分区');
+T('04-17','operations','P1','宣传推广','私域种子预热：朋友圈悬念发布','发布预热内容到朋友圈');
+T('04-17','commander','P1','宣传推广','朋友圈发布预热内容','总指挥个人朋友圈同步发布');
+T('04-17','operations','P2','宣传推广','一对一私聊核心OPC成员','选择10-15个核心成员定向告知大会消息');
+T('04-18','operations','P1','展位招商','完成合作方案PDF','A4, 3-5页，面向展位摊主',{deliverable:'生态伙伴合作方案PDF'});
+T('04-18','design','P1','设计物料','合作方案视觉设计','配合运营完成PDF的视觉排版');
+T('04-18','operations','P0','宣传推广','BD名单完成','截止日！20-30个目标对象全部录入');
+T('04-19','design','P1','设计物料','倒计时海报模板制作','可替换数字的模板',{deliverable:'倒计时海报模板文件'});
+T('04-19','operations','P0','行政运营','三个报名表单完成','截止日！三个链接全部可用');
+T('04-19','operations','P2','行政运营','报名表单最终测试','每个表单完整测试一遍');
+T('04-20','commander','P0','行政运营','里程碑1检查','逐项验收所有弹药是否就绪');
+T('04-20','design','P0','设计物料','主KV + 3张预热海报交付','截止日！设计定稿并审核通过');
+T('04-20','design','P0','设计物料','倒计时海报模板5张交付','截止日！');
+T('04-20','commander','P0','行政运营','领导会确认日期5月27日','必须在今天最终确认');
+T('04-20','commander','P0','行政运营','确认宣传负责人人选','紧急！如仍未确认需指定临时接手人');
+
+// Phase 2
+T('04-21','operations','P1','宣传推广','私域正式宣发启动','群公告发送三类席位开放招募通知');
+T('04-21','operations','P2','设计物料','准备席位说明图brief','给设计提供三类席位的文案和区别说明');
+T('04-22','marketing','P1','宣传推广','小红书首发','"副业快撑不住了" 12:00发布',{time:'12:00'});
+T('04-22','booth','P1','展位招商','展位摊主BD启动','发出20份合作方案给BD名单上的目标客户');
+T('04-22','design','P0','设计物料','席位说明图x3完成','截止日！三类席位的视觉说明图');
+T('04-22','guest','P1','嘉宾管理','启动嘉宾邀请沟通','清华AI教授/阿里/火山引擎');
+T('04-22','operations','P1','行政运营','早鸟价1599元正式开始','确认收款渠道畅通');
+T('04-23','booth','P2','展位招商','BD跟进第一轮反馈','记录意向程度和疑问');
+T('04-23','guest','P1','嘉宾管理','嘉宾邀请函初稿','正式邀请函文案',{deliverable:'邀请函文档'});
+T('04-23','operations','P2','行政运营','统计首日报名数据','汇总三类席位报名情况');
+T('04-24','marketing','P1','宣传推广','小红书发布','"什么是OPC？" 概念型 12:00',{time:'12:00'});
+T('04-24','operations','P2','宣传推广','准备下周内容素材','整理下周需要发布的内容文案');
+T('04-25','marketing','P1','宣传推广','短视频发布','"OPC是什么？30秒讲清楚" 抖音/视频号');
+T('04-25','design','P1','设计物料','倒计时海报模板审核定稿','确认模板可用，测试替换数字效果');
+T('04-26','marketing','P1','宣传推广','小红书发布','"你有没有一个人做过很厉害的事" 20:00',{time:'20:00'});
+T('04-27','operations','P1','行政运营','本周数据复盘','汇总报名数/阅读量/转化率，形成周报');
+T('04-27','booth','P2','展位招商','BD跟进第二轮','对有意向的摊主深入沟通');
+T('04-27','guest','P2','嘉宾管理','嘉宾邀请跟进','确认已发出邀请的回复情况');
+T('04-28','marketing','P1','宣传推广','小红书+私域发布','"一个人+AI工具，月收入做到了这个数字" 案例型 20:00',{time:'20:00'});
+T('04-28','operations','P2','宣传推广','内容轰炸周启动','本周密集发布内容');
+T('04-29','operations','P1','宣传推广','演讲会员定向私信邀约','发出15条定向私信给潜在演讲者');
+T('04-29','guest','P2','嘉宾管理','嘉宾确认跟进','逐个确认已邀请嘉宾的状态');
+T('04-30','marketing','P1','宣传推广','公众号首发','"金砖展会来了" 1200-1500字 19:00发布',{time:'19:00'});
+T('04-30','guest','P0','嘉宾管理','清华/阿里/火山嘉宾邀请跟进','截止日！必须获得明确回复');
+T('05-01','operations','P2','行政运营','假期值班','回复报名咨询消息');
+T('05-01','operations','P2','宣传推广','准备下周内容','假期期间准备5/4-5/10的素材');
+T('05-02','marketing','P1','宣传推广','小红书发布','"5月27日厦门，这个AI大会不一样" 12:00',{time:'12:00'});
+T('05-04','marketing','P1','宣传推广','小红书发布','"OPC大会三类席位说明" 20:00',{time:'20:00'});
+T('05-04','operations','P2','行政运营','假期后数据汇总','统计五一期间报名数据');
+T('05-05','marketing','P1','宣传推广','短视频发布','"金砖展会是什么？为什么OPC要去" 45-60秒');
+T('05-05','operations','P1','宣传推广','KOL合作联动周启动','开始联系KOL安排合作内容');
+T('05-06','operations','P1','宣传推广','启动KOL合作转发','至少联系3个KOL发布合作内容');
+T('05-06','booth','P1','展位招商','展位摊主BD中期跟进','统计意向摊主数量，跟进犹豫客户');
+T('05-07','operations','P2','宣传推广','KOL内容发布跟进','确认KOL内容发布情况和效果');
+T('05-07','guest','P1','嘉宾管理','确认已邀请嘉宾名单','汇总所有已确认/待确认/已拒绝嘉宾');
+T('05-08','marketing','P1','宣传推广','小红书互动帖','"已报名的伙伴来自哪里？"',{time:'20:00'});
+T('05-08','operations','P2','行政运营','准备里程碑2数据','汇总各KPI当前值');
+T('05-09','operations','P1','宣传推广','厦门本地渠道联系','联系咖啡馆/联合办公/AI社团/高校');
+T('05-09','design','P1','设计物料','本地推广物料设计','纸质海报+二维码设计稿',{deliverable:'本地推广海报'});
+T('05-10','commander','P0','行政运营','里程碑2检查','逐项验收KPI达成情况');
+T('05-10','operations','P1','宣传推广','厦门本地渠道正式投放','带纸质海报+二维码到本地场所');
+T('05-10','operations','P0','行政运营','早鸟价截止','今日24:00后恢复1699元');
+
+// Phase 3
+T('05-11','operations','P1','行政运营','演讲席位涨价通知','1599→1699，通知所有渠道更新价格');
+T('05-11','marketing','P1','宣传推广','名额倒计时内容','小红书+私域发布涨价+倒计时');
+T('05-11','operations','P1','宣传推广','老带新激励启动','发布推荐奖励政策');
+T('05-11','design','P1','设计物料','开始制作每日倒计时海报','共10张，5/11-5/20每天一张');
+T('05-12','marketing','P1','宣传推广','首批演讲嘉宾公布','小红书发布已确认嘉宾名单和简介');
+T('05-12','design','P1','设计物料','演讲嘉宾海报制作','为每位已确认嘉宾制作个人海报');
+T('05-12','design','P2','设计物料','倒计时海报Day1','倒计时15天');
+T('05-13','marketing','P1','宣传推广','短视频发布','"为什么你应该来这个AI大会" 倒计时14天');
+T('05-13','design','P2','设计物料','倒计时海报Day2','倒计时14天');
+T('05-14','marketing','P1','宣传推广','倒计时海报发布','每日倒计时海报开始，倒计时13天');
+T('05-14','design','P2','设计物料','倒计时海报Day3','倒计时13天');
+T('05-14','operations','P1','宣传推广','社群密集提醒','各群发送名额提醒');
+T('05-15','operations','P0','行政运营','演讲席位再涨价','1699→1999最终正价');
+T('05-15','operations','P0','现场执行','展位搭建方案确认','截止日！搭建方案+合同签署');
+T('05-15','design','P2','设计物料','倒计时海报Day4','');
+T('05-16','marketing','P1','宣传推广','已报名名单社会证明','晒出城市分布图，展示报名热度');
+T('05-16','design','P2','设计物料','倒计时海报Day5','');
+T('05-16','operations','P2','设计物料','开始规划大会日程表设计','确定A5双面彩印内容布局');
+T('05-17','operations','P1','宣传推广','厦门本地地推','高校/创业社区发100张A5传单，目标50本地报名');
+T('05-17','design','P2','设计物料','倒计时海报Day6','');
+T('05-17','design','P1','设计物料','A5传单设计并印刷','100张A5传单',{deliverable:'A5传单100张'});
+T('05-18','marketing','P1','宣传推广','冲刺催单','"还有9天，名额快满了" 20:00 小红书+私域',{time:'20:00'});
+T('05-18','operations','P1','宣传推广','社群密集提醒','再次各群发送催单消息');
+T('05-18','design','P2','设计物料','倒计时海报Day7','');
+T('05-19','marketing','P1','宣传推广','公众号第二篇','嘉宾阵容+名额紧张 800-1000字 19:00',{time:'19:00'});
+T('05-19','design','P2','设计物料','倒计时海报Day8','');
+T('05-20','commander','P0','行政运营','里程碑3检查','逐项验收KPI和物料准备情况');
+T('05-20','operations','P0','行政运营','演讲会员停止接受新报名','关闭报名入口或标注已满');
+T('05-20','guest','P0','嘉宾管理','发出演讲PPT收集通知','给所有确认嘉宾发PPT提交要求和截止日(5/23)');
+T('05-20','guest','P1','嘉宾管理','所有嘉宾签合同/微信确认','确保每位嘉宾有书面确认');
+T('05-20','design','P0','现场执行','展位搭建设计图确认','截止日！最终设计图定稿');
+T('05-20','operations','P1','行政运营','确认活动名片到货','200张标准名片 检查到货');
+T('05-20','operations','P1','行政运营','确认OPC早鸟周边礼品到货','20份周边(贴纸/徽章/手提袋) 检查到货');
+T('05-20','design','P2','设计物料','倒计时海报Day9-10','最后两张倒计时海报');
+T('05-20','operations','P1','行政运营','开始准备行前通知内容','草拟行前通知文案');
+T('05-20','design','P1','设计物料','大会日程图定稿','视觉化的大会议程图',{deliverable:'大会日程图'});
+
+// Phase 4
+T('05-21','operations','P1','行政运营','确定签到表信息字段','字段：姓名/公司/手机/席位类型/签到时间/备注');
+T('05-21','operations','P1','行政运营','从报名系统导出参会人员名单','按席位类型分类导出');
+T('05-21','operations','P1','行政运营','参会人员名单分类整理','分为演讲嘉宾/展位摊主/参观访客三个表');
+T('05-21','design','P1','设计物料','演讲嘉宾证书模板设计','A4精装，带印章位',{deliverable:'证书设计稿'});
+T('05-21','design','P1','设计物料','全球OPC联盟授权牌匾设计','铜牌或亚克力，约20cm×15cm',{deliverable:'牌匾设计稿'});
+T('05-21','design','P1','设计物料','嘉宾胸牌设计','4种：VIP/媒体/演讲/摊主',{deliverable:'胸牌设计稿'});
+T('05-21','design','P1','设计物料','工作人员胸牌设计','区分颜色+挂绳',{deliverable:'工作人员胸牌设计稿'});
+T('05-21','design','P0','设计物料','证件类物料送印','证书/牌匾/嘉宾胸牌50套/工作人员胸牌15套 当日必须送出');
+T('05-21','operations','P1','行政运营','发送行前通知第一版','内容：时间/地点/交通/议程/注意事项');
+T('05-21','marketing','P2','宣传推广','直播/短视频素材准备','开始准备大会当天的直播方案和短视频脚本');
+T('05-21','guest','P1','嘉宾管理','确认外地嘉宾住宿','5.26入住-5.28退房，约300-600元/晚');
+T('05-22','design','P1','设计物料','主背景板设计定稿','约4m×3m，KT板/喷绘布',{deliverable:'主背景板设计文件'});
+T('05-22','design','P1','设计物料','展位小背景板设计','约1m×1m×N个',{deliverable:'小背景板设计文件'});
+T('05-22','design','P1','设计物料','易拉宝设计定稿','2m×0.8m×4个，含展架',{deliverable:'易拉宝设计文件'});
+T('05-22','design','P0','设计物料','大型印刷物料送印','主背景板+小背景板+易拉宝+X展架 当日送出');
+T('05-22','venue','P1','现场执行','跟展馆方确认搭建进场时间','确认5/26可进场时间和注意事项');
+T('05-22','marketing','P1','宣传推广','倒计时5天小红书帖','发布倒计时5天的预热内容');
+T('05-22','operations','P1','设计物料','签到表模板设计','A4横版，分三种',{deliverable:'签到表模板'});
+T('05-23','guest','P0','嘉宾管理','收集所有演讲嘉宾PPT','截止日！逐个确认收到');
+T('05-23','operations','P1','行政运营','购买矿泉水','100瓶 约60元');
+T('05-23','operations','P1','行政运营','购买文具','圆珠笔5支+A4白纸20张 约30元');
+T('05-23','operations','P1','行政运营','购买胶带','透明胶带2卷+双面胶2卷 约20元');
+T('05-23','operations','P2','行政运营','确认备用充电宝','3个，团队成员各带一个');
+T('05-23','operations','P1','行政运营','最后一轮私信确认到场人数','逐个确认参会者是否如期到场');
+T('05-23','reception_a','P1','嘉宾管理','协助收集PPT','逐个联系嘉宾催收PPT');
+T('05-23','reception_a','P1','嘉宾管理','确认嘉宾行程','确认外地嘉宾的航班/高铁/接站需求');
+T('05-23','design','P1','设计物料','大会日程表排版','A5双面彩印，400张 送印',{deliverable:'日程表印刷文件'});
+T('05-23','design','P1','设计物料','议程桌牌设计','A5横版，20个',{deliverable:'桌牌设计文件'});
+T('05-23','design','P1','设计物料','区域指引牌设计','A4立式，10个',{deliverable:'指引牌设计文件'});
+T('05-23','design','P2','设计物料','报名二维码贴纸设计','A5防水贴纸，20张',{deliverable:'二维码贴纸文件'});
+T('05-24','operations','P0','设计物料','证件类物料到货确认','逐项检查：证书10份/牌匾N个/胸牌50套/工作人员胸牌15套/奖杯3个');
+T('05-24','operations','P1','设计物料','证书内容填写','在证书模板上填写每位嘉宾的姓名和内容');
+T('05-24','operations','P1','行政运营','签到表最终名单校对','确认无遗漏/错别字，按姓名拼音排序');
+T('05-24','operations','P1','行政运营','物料清单总核对','打印物料清单，逐项打勾确认状态');
+T('05-24','operations','P1','行政运营','发送行前通知最终版','更新版行前通知推送给所有参会者');
+T('05-25','operations','P0','设计物料','大型印刷物料到货确认','逐项检查：主背景板/展位小背景板/易拉宝4个/X展架/日程表400张');
+T('05-25','booth','P1','展位招商','发送展位摊主入场通知','含展位号/布置时间/注意事项');
+T('05-25','operations','P1','行政运营','建活动当天微信群','创建群并生成二维码');
+T('05-25','operations','P1','行政运营','发送微信群二维码','推送给所有确认参会者');
+T('05-25','marketing','P1','宣传推广','小红书"正在准备现场"','发布筹备花絮内容');
+T('05-25','venue','P1','现场执行','展位搭建开始','对接建发王静之，开始进场搭建');
+T('05-25','guest','P1','嘉宾管理','确认外地嘉宾入住酒店','确认预订信息、发送酒店地址和入住指引');
+
+// 5/26 搭建日
+T('05-26','operations','P0','设计物料','打印签到表','2-3份，确认名单是最终版',{time:'07:30'});
+T('05-26','operations','P1','设计物料','打印议程桌牌','20个 A5横版',{time:'07:30'});
+T('05-26','operations','P1','设计物料','打印区域指引牌','10个 A4立式',{time:'07:30'});
+T('05-26','operations','P1','设计物料','打印二维码贴纸','20张 A5',{time:'07:30'});
+T('05-26','commander','P0','行政运营','08:00全体到场清点物料','核对物料清单，确认分工',{time:'08:00'});
+T('05-26','venue','P0','现场执行','08:00-11:00 主背景板安装','',{time:'08:00'});
+T('05-26','venue','P0','现场执行','08:00-11:00 展位背景板安装','',{time:'08:00'});
+T('05-26','venue','P0','现场执行','08:00-11:00 桌椅摆放','签到台2桌4椅+演讲区桌椅',{time:'08:00'});
+T('05-26','venue','P1','现场执行','08:00-11:00 讲台搭建','',{time:'08:00'});
+T('05-26','venue','P1','现场执行','08:00-11:00 LED屏安装','',{time:'08:00'});
+T('05-26','venue','P1','现场执行','08:00-11:00 签到台布置','',{time:'08:00'});
+T('05-26','venue','P1','现场执行','11:00-13:00 易拉宝摆放','3-5个',{time:'11:00'});
+T('05-26','venue','P1','现场执行','11:00-13:00 指引牌安装','',{time:'11:00'});
+T('05-26','venue','P1','现场执行','11:00-13:00 二维码贴纸粘贴','',{time:'11:00'});
+T('05-26','venue','P1','现场执行','11:00-13:00 展板布置','',{time:'11:00'});
+T('05-26','tech','P0','现场执行','14:00-17:00 音响测试','2-3支话筒逐个测试',{time:'14:00'});
+T('05-26','tech','P0','现场执行','14:00-17:00 投影测试','确认投影清晰度和位置',{time:'14:00'});
+T('05-26','tech','P0','现场执行','14:00-17:00 PPT演练','逐个测试所有嘉宾PPT翻页和显示',{time:'14:00'});
+T('05-26','tech','P1','现场执行','14:00-17:00 直播设备测试','直播账号/推流测试',{time:'14:00'});
+T('05-26','tech','P1','现场执行','14:00-17:00 备用设备检查','确认备用话筒/电脑/转接头可用',{time:'14:00'});
+T('05-26','commander','P0','现场执行','17:00-18:00 全流程彩排','主持人转场词/签到流程/嘉宾上台路线/联盟授牌站位/颁奖站位',{time:'17:00'});
+T('05-26','commander','P0','现场执行','18:00 最终巡检','全场拍照/贵重物品锁好/确认次日开门时间/全体确认次日7:30到场',{time:'18:00'});
+
+// 5/27 大会日
+T('05-27','commander','P0','现场执行','07:30 全体到场','清点物料，确认最终分工',{time:'07:30'});
+T('05-27','venue','P1','现场执行','07:30-08:30 展位最终收尾','签到台最终布置+舞台检查',{time:'07:30'});
+T('05-27','tech','P0','现场执行','08:30-09:00 全面设备测试','音响/投影/PPT最终测试',{time:'08:30'});
+T('05-27','reception_a','P0','现场执行','09:00 签到台开启','核对展位摊主/演讲会员签到',{time:'09:00'});
+T('05-27','reception_b','P0','现场执行','09:00 参观访客签到','引导入座',{time:'09:00'});
+T('05-27','commander','P0','现场执行','09:40 开幕式','播放主题视频，视频录制开始',{time:'09:40'});
+T('05-27','commander','P1','现场执行','09:40-10:00 主办方致辞','宣布开幕',{time:'09:40'});
+T('05-27','commander','P0','现场执行','10:00-10:20 超级合子生态战略发布','《新物种觉醒》+合子AI工坊全球首发+退役军人&大学生OPC ← 最重要内容',{time:'10:00'});
+T('05-27','guest','P1','现场执行','10:20-10:40 全球专家圆桌','清华大学AI教授（拟沈阳教授）',{time:'10:20'});
+T('05-27','guest','P1','现场执行','10:40-11:00 基石伙伴发布','阿里/火山+谷雨OPC团队',{time:'10:40'});
+T('05-27','commander','P0','现场执行','11:00-11:10 全球OPC服务联盟成立仪式','授牌仪式 ← 最重要仪式！全程连拍',{time:'11:00'});
+T('05-27','operations','P1','现场执行','11:10-11:20 OPC中国行·厦门站','',{time:'11:10'});
+T('05-27','operations','P1','现场执行','11:20-11:30 黑客松大赛颁奖','',{time:'11:20'});
+T('05-27','commander','P1','现场执行','11:30-11:50 全球OPC招募计划发布','展示二维码，现场引导扫码',{time:'11:30'});
+T('05-27','operations','P1','现场执行','11:50 正式议程结束','主持人宣布自由交流',{time:'11:50'});
+T('05-27','marketing','P0','宣传推广','全程拍照记录','重点：联盟成立仪式/嘉宾演讲/合影',{time:'09:00'});
+T('05-27','guest','P1','嘉宾管理','12:30-14:00 核心嘉宾午餐','10-15人小范围聚餐 约1500-3000元',{time:'12:30'});
+T('05-27','booth','P1','展位招商','14:00-17:00 展位持续开放','金砖展会观众自由参观',{time:'14:00'});
+T('05-27','reception_a','P1','现场执行','17:00 收回签到物料','名单/胸牌/贴纸',{time:'17:00'});
+T('05-27','operations','P1','现场执行','17:00 收回剩余物料','名片/资料/礼品',{time:'17:00'});
+T('05-27','commander','P1','现场执行','17:00 确认后续安排','向展馆确认后续展位安排',{time:'17:00'});
+T('05-27','marketing','P0','宣传推广','17:00 全场最终拍照','留档照片',{time:'17:00'});
+T('05-27','tech','P1','现场执行','17:30 技术设备归还','打包归还所有租赁设备',{time:'17:30'});
+T('05-27','commander','P1','现场执行','17:30 大型物料处理','确认保留或废弃',{time:'17:30'});
+T('05-27','marketing','P0','宣传推广','18:00前 发第一条展后内容','当天必须发布！精华短视频/图文',{time:'18:00'});
+
+// Phase 5
+T('05-28','operations','P1','行政运营','感谢消息发送','给所有参会者发送感谢消息');
+T('05-28','booth','P1','展位招商','展位摊主后续跟进','后续合作意向沟通');
+T('05-29','marketing','P1','宣传推广','现场回顾内容第1条','演讲精华回顾');
+T('05-31','marketing','P1','宣传推广','现场回顾内容第2条','现场采访回顾');
+T('06-02','marketing','P1','宣传推广','现场回顾内容第3条','嘉宾金句集锦');
+T('06-04','marketing','P1','宣传推广','现场回顾内容第4-5条','更多回顾内容');
+T('06-10','marketing','P0','宣传推广','完整回顾视频','截止日！5-10分钟大会剪辑版');
+
+
+// ============ STATE ============
+let taskStatus = {};
+let roleNames = {};
+let kpiValues = {};
+let selectedDate = null;
+let currentView = 'dashboard';
+
+function loadState() {
+  try { taskStatus = JSON.parse(localStorage.getItem('wopc_tasks')) || {}; } catch(e) { taskStatus = {}; }
+  try { roleNames = JSON.parse(localStorage.getItem('wopc_roles')) || {}; } catch(e) { roleNames = {}; }
+  try { kpiValues = JSON.parse(localStorage.getItem('wopc_kpi')) || {}; } catch(e) { kpiValues = {}; }
+  ROLES_DEF.forEach(r => { if (!roleNames[r.key]) roleNames[r.key] = r.default; });
+  KPI_DEF.forEach(k => { if (kpiValues[k.key] === undefined) kpiValues[k.key] = 0; });
+}
+
+function saveTaskStatus() { localStorage.setItem('wopc_tasks', JSON.stringify(taskStatus)); }
+function saveRoles() { localStorage.setItem('wopc_roles', JSON.stringify(roleNames)); }
+function saveKpi() { localStorage.setItem('wopc_kpi', JSON.stringify(kpiValues)); }
+
+function getStatus(id) { return taskStatus[id] || 0; }
+function setStatus(id, s) { taskStatus[id] = s; saveTaskStatus(); }
+
+function today() { return '2026-04-18'; }
+function toDate(s) { return new Date(s+'T00:00:00'); }
+function diffDays(a, b) { return Math.round((toDate(b)-toDate(a))/(86400000)); }
+
+function getPhase(date) {
+  for (let p of PHASES) {
+    if (date >= p.start && date <= p.end) return p;
+  }
+  return null;
+}
+
+function getRoleDef(key) { return ROLES_DEF.find(r=>r.key===key); }
+function getRoleName(key) { return roleNames[key] || ''; }
+function getRoleColor(key) { let r = getRoleDef(key); return r ? r.color : '#888'; }
+function getRoleTitle(key) { let r = getRoleDef(key); return r ? r.title : key; }
+
+function getTasksByDate(date) { return TASKS.filter(t=>t.date===date); }
+
+// ============ COUNTDOWN ============
+function updateCountdown() {
+  const d = diffDays(today(), '2026-05-27');
+  document.getElementById('countdown').textContent = d > 0 ? `距大会 ${d} 天` : d === 0 ? '今天是大会日！' : `大会已结束 ${-d} 天`;
+}
+
+// ============ SWITCH VIEW ============
+function switchView(v) {
+  currentView = v;
+  document.querySelectorAll('.nav-tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0&&v==='dashboard')||(i===1&&v==='daily'));
+  });
+  document.getElementById('view-dashboard').classList.toggle('active', v==='dashboard');
+  document.getElementById('view-daily').classList.toggle('active', v==='daily');
+  if (v==='dashboard') renderDashboard();
+  if (v==='daily') renderCalendar();
+}
+
+function toggleCard(id) {
+  const el = document.getElementById(id);
+  const tog = document.getElementById('toggle-'+id);
+  if (el.style.display==='none') { el.style.display=''; if(tog) tog.classList.remove('collapsed'); }
+  else { el.style.display='none'; if(tog) tog.classList.add('collapsed'); }
+}
+
+// ============ DASHBOARD ============
+function renderDashboard() {
+  renderRoles();
+  renderKPI();
+  renderPhases();
+  renderWorkstreams();
+  renderUrgent();
+  renderRoleSummary();
+}
+
+function renderRoles() {
+  const g = document.getElementById('role-grid');
+  g.innerHTML = ROLES_DEF.map(r => `
+    <div class="role-item">
+      <div class="role-dot" style="background:${r.color}"></div>
+      <div class="role-title" style="cursor:pointer;transition:color .2s;" onclick="openTL('${r.key}')" onmouseover="this.style.color='${r.color}'" onmouseout="this.style.color=''">${r.title}</div>
+      <input class="role-input" value="${getRoleName(r.key)}" onchange="roleNames['${r.key}']=this.value;saveRoles();renderAll();" onclick="event.stopPropagation()" />
+      <span style="font-size:10px;color:${r.color};cursor:pointer;white-space:nowrap;" onclick="openTL('${r.key}')">时间轴→</span>
+    </div>
+  `).join('');
+}
+
+function renderKPI() {
+  const g = document.getElementById('kpi-grid');
+  g.innerHTML = KPI_DEF.map(k => {
+    const v = kpiValues[k.key] || 0;
+    const pct = Math.min(100, Math.round(v/k.target*100));
+    const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--gold)' : 'var(--red)';
+    return `
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">
+        <input type="number" min="0" value="${v}" onchange="kpiValues['${k.key}']=Number(this.value);saveKpi();renderKPI();" />
+        <span class="kpi-target">/ ${k.target}${k.unit}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color};"></div></div>
+      <div style="font-size:11px;color:${color};margin-top:4px;">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderPhases() {
+  const bar = document.getElementById('phase-bar');
+  const td = today();
+  bar.innerHTML = PHASES.map(p => {
+    const tasks = TASKS.filter(t=>t.date>=p.start&&t.date<=p.end);
+    const done = tasks.filter(t=>getStatus(t.id)===2).length;
+    const pct = tasks.length ? Math.round(done/tasks.length*100) : 0;
+    const isCurrent = td >= p.start && td <= p.end;
+    return `
+    <div class="phase-seg ${isCurrent?'current':''}" style="border-color:${p.color}40;${isCurrent?'background:'+p.color+'15':''}">
+      <div class="phase-name" style="color:${p.color}">${p.name}</div>
+      <div class="phase-date">${p.start.slice(5)} ~ ${p.end.slice(5)}</div>
+      <div class="phase-pct">${pct}%</div>
+      <div class="progress-bar" style="margin-top:4px;"><div class="progress-fill" style="width:${pct}%;background:${p.color};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderWorkstreams() {
+  const el = document.getElementById('ws-list');
+  el.innerHTML = WORKSTREAMS.map(w => {
+    const tasks = TASKS.filter(t=>t.ws===w.key);
+    const done = tasks.filter(t=>getStatus(t.id)===2).length;
+    const pct = tasks.length ? Math.round(done/tasks.length*100) : 0;
+    return `
+    <div class="ws-item">
+      <div class="ws-name">${w.label}</div>
+      <div class="ws-bar"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${w.color};"></div></div></div>
+      <div class="ws-pct">${done}/${tasks.length} (${pct}%)</div>
+    </div>`;
+  }).join('');
+}
+
+function renderUrgent() {
+  const el = document.getElementById('urgent-list');
+  const td = today();
+  const overdue = TASKS.filter(t=>t.date<td && getStatus(t.id)<2);
+  const todayT = TASKS.filter(t=>t.date===td && getStatus(t.id)<2);
+  const upcoming = TASKS.filter(t=>{
+    const d = diffDays(td, t.date);
+    return d>0 && d<=3 && getStatus(t.id)<2;
+  });
+
+  let html = '';
+  if (overdue.length===0 && todayT.length===0 && upcoming.length===0) {
+    html = '<div style="color:var(--gray);font-size:13px;padding:8px;">暂无紧急事项</div>';
+  }
+  overdue.slice(0,10).forEach(t => {
+    html += `<div class="urgent-item"><div class="urgent-date" style="color:var(--red);">${t.date.slice(5)} 逾期</div><div class="urgent-text"><strong>${t.title}</strong> <span style="font-size:11px;color:var(--gray);">[${getRoleTitle(t.role)}]</span></div></div>`;
+  });
+  if (overdue.length>10) html += `<div style="color:var(--red);font-size:12px;padding:4px 8px;">...还有 ${overdue.length-10} 项逾期任务</div>`;
+  todayT.forEach(t => {
+    html += `<div class="urgent-item today"><div class="urgent-date" style="color:var(--gold);">今天</div><div class="urgent-text"><strong>${t.title}</strong> <span style="font-size:11px;color:var(--gray);">[${getRoleTitle(t.role)}]</span></div></div>`;
+  });
+  upcoming.forEach(t => {
+    html += `<div class="urgent-item upcoming"><div class="urgent-date">${t.date.slice(5)}</div><div class="urgent-text"><strong>${t.title}</strong> <span style="font-size:11px;color:var(--gray);">[${getRoleTitle(t.role)}]</span></div></div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderRoleSummary() {
+  const el = document.getElementById('role-summary');
+  const td = today();
+  el.innerHTML = ROLES_DEF.map(r => {
+    const tasks = TASKS.filter(t=>t.role===r.key);
+    const done = tasks.filter(t=>getStatus(t.id)===2).length;
+    const inprog = tasks.filter(t=>getStatus(t.id)===1).length;
+    const overdue = tasks.filter(t=>t.date<td && getStatus(t.id)<2).length;
+    return `
+    <div class="role-sum-card" onclick="openTL('${r.key}')" style="cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='${r.color}'" onmouseout="this.style.borderColor=''">
+      <div class="role-sum-header">
+        <div class="role-dot" style="background:${r.color}"></div>
+        <div><strong style="font-size:13px;">${r.title}</strong> <span style="font-size:11px;color:var(--gray);">${getRoleName(r.key)}</span> <span style="font-size:10px;color:${r.color};margin-left:4px;">查看时间轴 →</span></div>
+      </div>
+      <div class="role-sum-stats">
+        <span>总${tasks.length}</span>
+        <span style="color:var(--green);">完${done}</span>
+        <span style="color:var(--gold);">进${inprog}</span>
+        <span style="color:var(--red);">逾${overdue}</span>
+      </div>
+      <div class="progress-bar" style="margin-top:6px;"><div class="progress-fill" style="width:${tasks.length?Math.round(done/tasks.length*100):0}%;background:${r.color};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ============ CALENDAR ============
+function renderCalendar() {
+  const sidebar = document.getElementById('cal-sidebar');
+  let html = '';
+  const months = [[2026,4,'2026年4月'],[2026,5,'2026年5月'],[2026,6,'2026年6月']];
+  const dayNames = ['一','二','三','四','五','六','日'];
+
+  months.forEach(([y,m,label]) => {
+    html += `<div class="cal-month"><div class="cal-month-title">${label}</div><div class="cal-grid">`;
+    dayNames.forEach(d => html += `<div class="cal-header">${d}</div>`);
+    const first = new Date(y, m-1, 1);
+    let dow = first.getDay(); if(dow===0) dow=7; // Monday=1
+    for (let i=1; i<dow; i++) html += '<div class="cal-cell"></div>';
+    const daysInMonth = new Date(y, m, 0).getDate();
+    for (let d=1; d<=daysInMonth; d++) {
+      const ds = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const tasks = getTasksByDate(ds);
+      const td = today();
+      let cls = '';
+      if (ds === td) cls += ' today';
+      if (ds === selectedDate) cls += ' selected';
+      if (tasks.length > 0) {
+        const allDone = tasks.every(t=>getStatus(t.id)===2);
+        const someDone = tasks.some(t=>getStatus(t.id)>0);
+        const hasOverdue = ds < td && tasks.some(t=>getStatus(t.id)<2);
+        if (hasOverdue) cls += ' overdue';
+        else if (allDone) cls += ' all-done';
+        else if (someDone) cls += ' some-done';
+      } else {
+        cls += ' no-tasks';
+      }
+      const isMilestone = MILESTONE_DATES.includes(ds);
+      const phase = getPhase(ds);
+      html += `<div class="cal-cell${cls}" onclick="selectDate('${ds}')">${d}`;
+      if (isMilestone) html += '<span class="star">&#9733;</span>';
+      if (tasks.length>0) html += `<span class="badge">${tasks.length}</span>`;
+      if (phase) html += `<span class="phase-dot" style="background:${phase.color}"></span>`;
+      html += '</div>';
+    }
+    html += '</div></div>';
+  });
+  sidebar.innerHTML = html;
+  if (selectedDate) renderDailyDetail(selectedDate);
+}
+
+function selectDate(ds) {
+  selectedDate = ds;
+  renderCalendar();
+  renderDailyDetail(ds);
+}
+
+function renderDailyDetail(ds) {
+  const main = document.getElementById('daily-main');
+  const tasks = getTasksByDate(ds);
+  const dt = toDate(ds);
+  const dayNames = ['日','一','二','三','四','五','六'];
+  const dayOfWeek = '周' + dayNames[dt.getDay()];
+  const phase = getPhase(ds);
+  const daysUntil = diffDays(ds, '2026-05-27');
+  const done = tasks.filter(t=>getStatus(t.id)===2).length;
+  const pct = tasks.length ? Math.round(done/tasks.length*100) : 0;
+
+  let html = `<div class="daily-header">
+    <h2>${ds.slice(5).replace('-','/')} ${dayOfWeek}</h2>
+    <div class="meta">`;
+  if (phase) html += `<span class="phase-label" style="background:${phase.color}30;color:${phase.color};border:1px solid ${phase.color}50;">${phase.name}</span>`;
+  if (daysUntil > 0) html += `<span>距大会 ${daysUntil} 天</span>`;
+  else if (daysUntil === 0) html += `<span style="color:var(--gold);font-weight:700;">大会日！</span>`;
+  html += `<span>任务 ${done}/${tasks.length}</span>`;
+  html += `</div>
+    <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:${pct}%;background:${pct===100?'var(--green)':'var(--gold)'}"></div></div>
+  </div>`;
+
+  // Milestone
+  if (MILESTONES[ds]) {
+    const ms = MILESTONES[ds];
+    html += `<div class="milestone-box"><h3>&#9733; ${ms.label}</h3>`;
+    ms.checks.forEach((c,i) => {
+      const ck = `ms_${ds}_${i}`;
+      const checked = taskStatus[ck] ? 'checked' : '';
+      html += `<div class="ms-check"><input type="checkbox" ${checked} onchange="taskStatus['${ck}']=this.checked?2:0;saveTaskStatus();"> <span>${c}</span></div>`;
+    });
+    html += '</div>';
+  }
+
+  if (tasks.length === 0) {
+    html += '<div style="text-align:center;color:var(--gray);padding:40px;">该日无任务</div>';
+  } else {
+    // Group by workstream
+    const groups = {};
+    tasks.forEach(t => {
+      if (!groups[t.ws]) groups[t.ws] = [];
+      groups[t.ws].push(t);
+    });
+    // Sort by time if available
+    Object.keys(groups).forEach(ws => {
+      groups[ws].sort((a,b) => {
+        const ta = a.time || '99:99';
+        const tb = b.time || '99:99';
+        return ta.localeCompare(tb);
+      });
+    });
+
+    const wsOrder = ['现场执行','宣传推广','嘉宾管理','展位招商','设计物料','行政运营'];
+    const orderedKeys = wsOrder.filter(w => groups[w]);
+    // Add any remaining
+    Object.keys(groups).forEach(k => { if (!orderedKeys.includes(k)) orderedKeys.push(k); });
+
+    orderedKeys.forEach(ws => {
+      const wsDef = WORKSTREAMS.find(w=>w.key===ws);
+      html += `<div class="ws-group"><div class="ws-group-title" style="color:${wsDef?wsDef.color:'var(--gold)'}">${ws} (${groups[ws].length})</div>`;
+      groups[ws].forEach(t => {
+        const s = getStatus(t.id);
+        const roleDef = getRoleDef(t.role);
+        const roleColor = getRoleColor(t.role);
+        html += `<div class="task-item ${s===2?'completed':''}">
+          <div class="task-checkbox status-${s}" onclick="cycleStatus('${t.id}')"></div>
+          <div class="task-body">
+            <div class="task-title-row">
+              <span class="task-title">${t.title}</span>
+              <span class="tag tag-${t.priority.toLowerCase()}">${t.priority}</span>
+            </div>
+            ${t.desc ? `<div class="task-desc">${t.desc}</div>` : ''}
+            <div class="task-tags">
+              <span class="tag tag-role" style="color:${roleColor};border-color:${roleColor}40;">${getRoleTitle(t.role)} ${getRoleName(t.role)}</span>
+              ${t.deliverable ? `<span class="tag tag-deliverable">${t.deliverable}</span>` : ''}
+              ${t.time ? `<span class="tag tag-time">${t.time}</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    });
+  }
+
+  main.innerHTML = html;
+}
+
+function cycleStatus(id) {
+  const s = getStatus(id);
+  setStatus(id, (s+1)%3);
+  renderDailyDetail(selectedDate);
+  if (currentView==='dashboard') renderDashboard();
+  // Update calendar cell colors
+  renderCalendar();
+}
+
+// ============ TIMELINE ============
+function openTL(roleKey) {
+  const rd = getRoleDef(roleKey);
+  if (!rd) return;
+  const tasks = TASKS.filter(t => t.role === roleKey).sort((a,b) => a.date.localeCompare(b.date) || (a.time||'99').localeCompare(b.time||'99'));
+  const td = today();
+  const total = tasks.length;
+  const done = tasks.filter(t => getStatus(t.id)===2).length;
+  const doing = tasks.filter(t => getStatus(t.id)===1).length;
+  const overdue = tasks.filter(t => t.date<td && getStatus(t.id)<2).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+
+  const dayNames = ['日','一','二','三','四','五','六'];
+  let html = '';
+  // Header
+  html += `<div class="tl-head">
+    <h2 style="color:${rd.color}">${rd.title}</h2>
+    <div class="tl-sub">${getRoleName(roleKey)} · 个人任务时间轴</div>
+  </div>`;
+  // Stats
+  html += `<div class="tl-stats">
+    <div class="tl-stat"><div class="n" style="color:var(--white)">${total}</div><div class="l">总任务</div></div>
+    <div class="tl-stat"><div class="n" style="color:var(--green)">${done}</div><div class="l">已完成</div></div>
+    <div class="tl-stat"><div class="n" style="color:var(--gold)">${doing}</div><div class="l">进行中</div></div>
+    <div class="tl-stat"><div class="n" style="color:var(--red)">${overdue}</div><div class="l">逾期</div></div>
+    <div class="tl-stat"><div class="n" style="color:${rd.color}">${pct}%</div><div class="l">完成率</div></div>
+  </div>`;
+  // Legend
+  html += `<div class="tl-legend">
+    <span><div class="ld" style="background:var(--green)"></div>已完成</span>
+    <span><div class="ld" style="background:var(--gold)"></div>进行中</span>
+    <span><div class="ld" style="background:var(--red)"></div>逾期</span>
+    <span><div class="ld" style="background:var(--bg2);border:2px solid var(--gray2)"></div>未来</span>
+  </div>`;
+
+  // Timeline
+  html += '<div class="s-tl">';
+  let lastPhase = null;
+  let idx = 0;
+  tasks.forEach(t => {
+    const phase = getPhase(t.date);
+    // Phase divider
+    if (phase && (!lastPhase || lastPhase.name !== phase.name)) {
+      html += `<div class="tl-phase-div"><span class="tl-phase-pill" style="color:${phase.color};border-color:${phase.color}50">${phase.name} ${phase.start.slice(5)}~${phase.end.slice(5)}</span></div>`;
+      lastPhase = phase;
+    }
+    // If no phase (post-event)
+    if (!phase && lastPhase) {
+      html += `<div class="tl-phase-div"><span class="tl-phase-pill" style="color:var(--gray);border-color:var(--gray2)">展后传播</span></div>`;
+      lastPhase = null; // only show once
+    }
+
+    const s = getStatus(t.id);
+    const side = idx % 2 === 0 ? 'left' : 'right';
+    const dt = toDate(t.date);
+    const dow = '周' + dayNames[dt.getDay()];
+    const dateStr = t.date.slice(5).replace('-','/');
+    const daysLeft = diffDays(t.date, '2026-05-27');
+
+    // Dot class
+    let dotCls = 'st-future';
+    if (s === 2) dotCls = 'st-done';
+    else if (s === 1) dotCls = 'st-doing';
+    else if (t.date < td) dotCls = 'st-overdue';
+
+    // Date color
+    let dateColor = phase ? phase.color : 'var(--gray)';
+    if (t.date < td && s < 2) dateColor = 'var(--red)';
+    if (s === 2) dateColor = 'var(--green)';
+
+    const wsDef = WORKSTREAMS.find(w=>w.key===t.ws);
+
+    html += `<div class="tl-node ${side}">
+      <div class="tl-dot2 ${dotCls}"></div>
+      <div class="tl-card ${s===2?'is-done':''}">
+        <div class="tl-date" style="color:${dateColor}">
+          ${dateStr} ${dow}
+          ${t.time ? `<span class="tag tag-time" style="font-size:9px;padding:0 5px;">${t.time}</span>` : ''}
+          ${daysLeft > 0 ? `<span style="font-size:9px;color:var(--gray);margin-left:auto;">T-${daysLeft}</span>` : ''}
+          ${daysLeft === 0 ? `<span style="font-size:9px;color:var(--gold);margin-left:auto;">大会日</span>` : ''}
+        </div>
+        <div class="tl-title2">${t.title}</div>
+        ${t.desc ? `<div class="tl-desc2">${t.desc}</div>` : ''}
+        <div class="tl-tags2">
+          <span class="tag tag-${t.priority.toLowerCase()}" style="font-size:9px;">${t.priority}</span>
+          ${wsDef ? `<span class="tag" style="font-size:9px;color:${wsDef.color};background:${wsDef.color}15;border:1px solid ${wsDef.color}30;">${wsDef.label}</span>` : ''}
+          ${t.deliverable ? `<span class="tag tag-deliverable" style="font-size:9px;">${t.deliverable}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+    idx++;
+  });
+  html += '</div>';
+
+  if (tasks.length === 0) {
+    html += '<div style="text-align:center;color:var(--gray);padding:60px;">该角色暂无任务</div>';
+  }
+
+  document.getElementById('tl-content').innerHTML = html;
+  document.getElementById('tl-overlay').classList.add('show');
+  document.getElementById('tl-overlay').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeTL() {
+  document.getElementById('tl-overlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ESC to close
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeTL(); });
+
+// ============ INIT ============
+function renderAll() {
+  updateCountdown();
+  if (currentView==='dashboard') renderDashboard();
+  if (currentView==='daily') renderCalendar();
+}
+
+loadState();
+// Auto-select today
+selectedDate = today();
+renderAll();
+</script>
+</body>
+</html>
